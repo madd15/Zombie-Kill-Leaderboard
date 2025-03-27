@@ -6,12 +6,6 @@ Config.debug = false
 ----------------------------------------------
 Config.client = {
     visibleByDefault = true,
-    label = "Zombies",
-    pos = { x = 0.02, y = 0.71 },
-    rgb = { r = 255, g = 64, b = 64 },
-    alpha = 255,
-    size = 0.4,
-    font = 4,
 }
 ----------------------------------------------
 --        💬 Setup discord webhook

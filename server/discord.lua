@@ -108,8 +108,8 @@ if Config.discord.enabled then
                 ["description"] = description,
                 ["color"] = 16753920,
                 ["footer"] = {
-                    ["text"] = os.date("%a %b %d, %I:%M%p") ..
-                    " | Updated every " .. Config.discord.updateTime .. " minutes",
+                    ["text"] = "Last updated " .. os.date("%a %b %d, %I:%M%p") ..
+                    "\nUpdated every " .. Config.discord.updateTime .. " minutes",
                     ["icon_url"] = Config.discord.footer
                 }
             }
@@ -142,13 +142,13 @@ if Config.discord.enabled then
 
     AddEventHandler("onResourceStart", function(resourceName)
         if GetCurrentResourceName() ~= resourceName then return end
-        Wait(5000)
+        Wait(4000)
         getLastMessageID()
     end)
 
     -- Event to update the embed every 60 seconds
     CreateThread(function()
-        Wait(5000)
+        Wait(6000)
         while true do
             sendTop10ToDiscord()
             Wait(Config.discord.updateTime * 60 * 1000)

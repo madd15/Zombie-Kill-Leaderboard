@@ -4,12 +4,6 @@ local isScoreboardVisible = false
 local isTextVisible = client.visibleByDefault
 local zombiekills = 0
 
-local function toggleKillText()
-    isTextVisible = not isTextVisible
-end
-
-exports('toggleKillText', toggleKillText)
-
 -- Function to set display
 function SetDisplay(state)
     SendNUIMessage({
@@ -18,14 +12,41 @@ function SetDisplay(state)
     SetNuiFocus(state, state)
 end
 
+function ToggleZombieKills(state)
+    SendNUIMessage({
+        action = state and "killshow" or "killhide",
+    })
+end
+
+function SetZombieKills(kills)
+    SendNUIMessage({
+        action = "updatePlayerKills",
+        kills = kills
+    })
+end
+
+function incrementZombieKills()
+    zombiekills = zombiekills + 1
+    TriggerServerEvent("zombie_killboard:playerZombieKill")
+    SetZombieKills(zombiekills)
+end
+
 RegisterCommand('toggleScoreboard', function()
     isScoreboardVisible = not isScoreboardVisible
     SetDisplay(isScoreboardVisible)
 end, false)
 
 RegisterCommand('toggleKillText', function()
-    toggleKillText()
+    isTextVisible = not isTextVisible
+    ToggleZombieKills(isTextVisible)
 end, false)
+
+local function toggleKillText(state)
+    isTextVisible = state
+    ToggleZombieKills(state)
+end
+
+exports('toggleKillText', toggleKillText)
 
 RegisterNUICallback('close', function()
     isScoreboardVisible = false
@@ -38,34 +59,38 @@ RegisterNUICallback('fetchPlayersData', function(data, cb)
     cb(playerData)
 end)
 
+RegisterNUICallback('fetchTop50PlayersData', function(data, cb)
+    local playerData = awaitServerCallback('zombie_killboard:scoreboard:request50PlayersData')
+    cb(playerData)
+end)
+
+RegisterNUICallback('fetchStatsData', function(data, cb)
+    local stats = awaitServerCallback('zombie_killboard:scoreboard:requestStatsData')
+    cb(stats)
+end)
+
 -- Bind the F10 key to toggle the scoreboard
 RegisterKeyMapping('toggleScoreboard', 'Toggle Scoreboard', 'keyboard', 'F10')
 
 AddEventHandler('onZombieDied', function(entity)
     if GetPedSourceOfDeath(entity) == PlayerPedId() then
-        zombiekills = zombiekills + 1
-        TriggerServerEvent("zombie_killboard:playerZombieKill")
+        incrementZombieKills()
     end
 end)
 
 AddEventHandler('zombie_killboard:onPlayerLoaded', function()
     zombiekills = awaitServerCallback('zombie_killboard:getPlayerKills')
+    SetZombieKills(zombiekills)
+    ToggleZombieKills(isTextVisible)
 end)
 
 Citizen.CreateThread(function()
     while true do
-        Wait(0)
-        if isTextVisible then
-            SetTextColour(client.rgb.r, client.rgb.g, client.rgb.b, client.alpha)
-            SetTextFont(client.font)
-            SetTextScale(client.size, client.size)
-            SetTextWrap(0.0, 1.0)
-            SetTextCentre(false)
-            SetTextDropshadow(2, 2, 0, 0, 0)
-            SetTextOutline()
-            SetTextEntry("STRING")
-            AddTextComponentString(client.label .."~w~: ".. zombiekills)
-            DrawText(client.pos.x, client.pos.y)
+        Wait(500)
+        if IsPauseMenuActive() then
+            ToggleZombieKills(false)
+        else
+            ToggleZombieKills(isTextVisible)
         end
     end
 end)

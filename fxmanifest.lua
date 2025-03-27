@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
-author 'Madd Inspired by Goku | .astrozz'
-description 'Scoreboard with Zombiekills'
+author 'Madd - Inspired by Goku | .astrozz'
+description 'Scoreboard with Zombie kills'
 version '1.0.0'
 
 client_scripts {
