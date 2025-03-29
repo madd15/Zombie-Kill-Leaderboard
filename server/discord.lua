@@ -142,6 +142,11 @@ if Config.discord.enabled then
 
     AddEventHandler("onResourceStart", function(resourceName)
         if GetCurrentResourceName() ~= resourceName then return end
+        local tableExists = MySQL.query.await('SHOW TABLES LIKE "zombiekills_messages"')
+        while not tableExists do
+            Wait(5000)
+            tableExists = MySQL.query.await('SHOW TABLES LIKE "zombiekills_messages"')
+        end
         Wait(4000)
         getLastMessageID()
     end)
