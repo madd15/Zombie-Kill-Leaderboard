@@ -1,4 +1,5 @@
 if Config.discord.enabled then
+
     local lastMessageID = nil
 
     -- Function to retrieve the last message ID from the database
@@ -75,8 +76,10 @@ if Config.discord.enabled then
                 if err == 200 and text then
                     local response = json.decode(text)
                     if response and response.id then
+                        if response.id ~= lastMessageID then
+                            saveMessageID(response.id)
+                        end
                         lastMessageID = response.id
-                        saveMessageID(response.id)
                         debugPrint("^2[INFO]^0 New leaderboard message posted. ID:", lastMessageID)
                     else
                         debugPrint("^1[ERROR]^0 Failed to retrieve new message ID.")
