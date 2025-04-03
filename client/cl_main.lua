@@ -2,6 +2,7 @@ local client = awaitServerCallback('zombie_killboard:server:getConfig')
 
 local isScoreboardVisible = false
 local isTextVisible = client.visibleByDefault
+local isTextCommand = false
 local zombiekills = 0
 
 -- Function to set display
@@ -38,13 +39,19 @@ end, false)
 
 RegisterCommand('toggleKillText', function()
     isTextVisible = not isTextVisible
+    isTextCommand = not isTextCommand
     ToggleZombieKills(isTextVisible)
 end, false)
 
 local function toggleKillText(state)
+    if isTextCommand then return end
     isTextVisible = state
     ToggleZombieKills(state)
 end
+
+RegisterNetEvent('zombie_killboard:client:toggle', function(state)
+    toggleKillText(state)
+end)
 
 exports('toggleKillText', toggleKillText)
 

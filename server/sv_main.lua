@@ -2,6 +2,14 @@ registerCallback('zombie_killboard:server:getConfig', function(src, cb)
     cb(Config.client)
 end)
 
+AddEventHandler('ox_inventory:openedInventory', function(source)
+    TriggerClientEvent('zombie_killboard:client:toggle', source, false)
+end)
+
+AddEventHandler('ox_inventory:closedInventory', function(source)
+    TriggerClientEvent('zombie_killboard:client:toggle', source, true)
+end)
+
 -- Function to get the player data for the scoreboard
 local function GetScoreboardData()
     local players = {}
