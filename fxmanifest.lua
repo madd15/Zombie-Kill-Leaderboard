@@ -20,8 +20,8 @@ server_scripts {
 
 files {
     'html/index.html',
-    'html/assets/*.js',
-    'html/assets/*.css'
+    'html/*.js',
+    'html/*.css'
 }
 
 ui_page 'html/index.html'
